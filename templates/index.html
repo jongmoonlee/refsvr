@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <title>Form</title>
+    </head>
+    <body>
+        <form action="/" method="POST">
+            {{ form.csrf_token}}
+            {{ form.rigs}}
+            {{ form.dates}}
+            {{ form.operators}}
+            <ul>
+                {% for error in form.rigs.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+            <input type="submit" name="sumit" id="">
+        </form>
+    </body>
+</html>
