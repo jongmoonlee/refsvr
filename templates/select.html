@@ -1,21 +1,40 @@
-{% extends "layout.html" %}
+{% extends "layout_inv.html" %}
 {% block content %}
 <html>
     <head>
         <title>Form</title>
     </head>
     <body>
-        <form action="/select" method="POST">
-            {{ form.csrf_token}}
-            {{ form.RigName}}
-            {{ form.Date}}
-            {{ form.User}}
-            {{ form.PM}}
-            <ul>
-                {% for error in form.RigName.errors %}
-                    <li>{{ error }}</li>
+        <tr>
+            <td><a class="mr-2">InSW</a></td>
+            <td><a class="mr-2">SB</a></td>
+            <td><a class="mr-2">OPM</a></td>
+            <td><a class="mr-2">Pol</a></td>
+         
+        </tr>
+
+
+        <form action="/plot" method="POST">            
+            <select name= inSW method="POST" action="/">
+                {%for x in inSW%}
+                <option value= "{{x}}" SELECTED>{{x}}</option>
                 {% endfor %}
-            </ul>
+            </select>
+            <select name= SB method="POST" action="/">
+                {%for x in sb%}
+                <option value= "{{x}}" SELECTED>{{x}}</option>
+                {% endfor %}
+            </select>
+            <select name= OPM method="POST" action="/">
+                {%for x in opm%}
+                <option value= "{{x}}" SELECTED>{{x}}</option>
+                {% endfor %}
+            </select>
+            <select name= PolState method="POST" action="/">
+                {%for x in pol%}
+                <option value= "{{x}}" SELECTED>{{x}}</option>
+                {% endfor %}
+            </select>
             <input type="submit" name="submit" id="">
         </form>
     </body>

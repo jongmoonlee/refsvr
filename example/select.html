@@ -1,0 +1,24 @@
+<!-- {% extends "layout_inv.html" %}
+{% block content %}
+<html>
+    <head>
+        <title>Form</title>
+    </head>
+    <body>
+        <form action="/select" method="POST">
+            {{ form.csrf_token}} 
+            {{ form.InSW}}
+            {{ form.SB}}
+            {{ form.OPM}}
+            {{ form.PolState}}
+            {{ form.WL}}           
+            <ul>
+                {% for error in form.InSW.errors %}
+                    <li>{{ error }}</li>                   
+                {% endfor %}
+            </ul>            
+            <input type="submit" name="submit" id="">
+        </form>
+    </body>
+</html>
+{% endblock content %} -->

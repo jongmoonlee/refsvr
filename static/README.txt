@@ -23,3 +23,5 @@ https://mdbootstrap.com/forums/forum/support/
 Contact:
 office@mdbootstrap.com
 
+flask run --host=0.0.0.0
+

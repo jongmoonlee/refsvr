@@ -5550,7 +5550,7 @@ jQuery.Event = function( src, props ) {
 		jQuery.extend( this, props );
 	}
 
-	// Create a timestamp if incoming event doesn't have one
+	// Create a timestamp if Inbound event doesn't have one
 	this.timeStamp = src && src.timeStamp || Date.now();
 
 	// Mark it as fixed
@@ -8426,7 +8426,7 @@ jQuery.extend( jQuery.event, {
 			event.target = elem;
 		}
 
-		// Clone any incoming data and prepend the event, creating the handler arg list
+		// Clone any Inbound data and prepend the event, creating the handler arg list
 		data = data == null ?
 			[ event ] :
 			jQuery.makeArray( data, [ event ] );

@@ -1332,7 +1332,7 @@ var plugin = {
 
 	beforeEvent: function(chart, event) {
 		// If there is no listener registered for this chart, `listened` will be false,
-		// meaning we can immediately ignore the incoming event and avoid useless extra
+		// meaning we can immediately ignore the Inbound event and avoid useless extra
 		// computation for users who don't implement label interactions.
 		if (chart[EXPANDO_KEY]._listened) {
 			switch (event.type) {

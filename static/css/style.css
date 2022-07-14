@@ -1,0 +1,4 @@
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_desc:before {
+bottom: .5em;
+}

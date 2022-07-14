@@ -3,7 +3,7 @@ from flask import Flask, request, render_template,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 import sqlalchemy
-from wtforms_sqlalchemy.fields import QuerySelectField
+from wtforms_sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from forms.multi_select_form import MigrateUsersForm
 
 # Bokeh Part
@@ -53,7 +53,6 @@ class Refdata(db.Model):
 
     def __repr__(self):
         return '{},{},{},{},{},{},{}'.format(self.DateId,self.InSW,self.SB,self.OPM, self.PolState, self.WL, self.Val)
-    
 
 def summary_query():
     form = SummaryForm()
@@ -70,6 +69,24 @@ class SummaryForm(FlaskForm):
     StopWL = QuerySelectField(query_factory=summary_query, allow_blank=False, get_label='StopWL')
 
 
+
+def refdata_query():
+    form = RefdataForm()
+    return Refdata.query
+
+
+class RefdataForm(FlaskForm):
+    DateId = QuerySelectField(query_factory=refdata_query, allow_blank=False, get_label='DateId')
+    InSW = QuerySelectMultipleField(query_factory=refdata_query, allow_blank=False, get_label='InSW')
+    SB = QuerySelectMultipleField(query_factory=refdata_query, allow_blank=False, get_label='SB')
+    OPM = QuerySelectMultipleField(query_factory=refdata_query, allow_blank=False, get_label='OPM')
+    PolState = QuerySelectMultipleField(query_factory=refdata_query, allow_blank=False, get_label='PolState')
+    WL = QuerySelectMultipleField(query_factory=refdata_query, allow_blank=False, get_label='WL')
+    Val = QuerySelectField(query_factory=refdata_query, allow_blank=False, get_label='Val')
+
+
+
+
 @app.route("/")
 @app.route("/home")
 def home():    
@@ -79,26 +96,46 @@ def home():
 
 @app.route("/refdata")
 def refdata():    
-    summary = Refdata.query.filter(Refdata.DateId==2)    
-    # result_dict = [u.__dict__ for u in summary]
-       
+    summary = Refdata.query.filter(Refdata.DateId==2) 
 
     return render_template('refdata.html', summary=summary)
 
 # DropDownList
-@app.route('/select', methods=["GET","POST"])
-def select():
-    form = SummaryForm()
+@app.route("/<Date>", methods=["GET","POST"])
+def Date(Date):
+    DateIdQuery = Summary.query.with_entities(Summary.DateId).filter(Summary.Date ==Date)
+    DateId = [u.InSW for u in DateIdQuery]  
+    id = DateId[0]
+    print("Xid")
+    print(id)
 
-    # you can set filter here
-    form.Date.query = Summary.query.filter(Summary.Date == '2022-07-07')
-    form.Date.query = Summary.query.all()
-    # if form.validate_on_submit():
+    inSW_query = Refdata.query.with_entities(Refdata.InSW).distinct().filter(Refdata.DateId == id)    
+    inSW = [u.InSW for u in inSW_query]  
+
+    sb_query = Refdata.query.with_entities(Refdata.SB).distinct().filter(Refdata.DateId == id)       
+    sb = [u.SB for u in sb_query]
+
+    opm_query = Refdata.query.with_entities(Refdata.OPM).distinct().filter(Refdata.DateId == id)       
+    opm = [u.OPM for u in opm_query]
+
+    pol_query = Refdata.query.with_entities(Refdata.PolState).distinct().filter(Refdata.DateId == id)       
+    pol = [u.PolState for u in pol_query]
+
     if request.method == 'POST':
-        print(form.PM.data)
+        print("xxxxxx")
+        print(id)
+       
+        inSW = request.form.get('inSW')
+        SB = request.form.get('SB')
+        OPM = request.form.get('OPM')
+        PolState = request.form.get('PolState')
+        print(inSW)
+        print(SB)
+        print(OPM)
+        print(PolState)
         # return '<h1>{}</h1>'.format(form.RigName.data)
-        return render_template('select.html', form=form)
-    return render_template('select.html', form=form)
+        return plot(2, inSW,SB,OPM,0)
+    return render_template('select.html', pol=pol, inSW = inSW, sb=sb, opm=opm)
 
 @app.route('/migrate', methods = ["GET", "POST"])
 def migrate_users():
@@ -113,16 +150,12 @@ def migrate_users():
         return jsonify(posted_data)
     return render_template('simpler.html', form=form)
 
-@app.route('/<Date>')
-def dataByDate(Date):
-    x= Summary.query.filter(Date == Date)
-    y = Refdata.query.filter_by(DateId = 1)  
-    return render_template('xx.html', y = y)
+
 
 @app.route('/plot')
-def plot():
-    wl_query = Refdata.query.with_entities(Refdata.WL)
-    val_query = Refdata.query.with_entities(Refdata.Val).filter(Refdata.DateId==1,Refdata.SB==1,Refdata.OPM ==77, Refdata.PolState == 0)
+def plot(DateId,InSW,SB,OPM,PolState):
+    wl_query = Refdata.query.with_entities(Refdata.WL).filter(Refdata.DateId==DateId,Refdata.InSW==InSW,Refdata.SB==SB,Refdata.OPM ==OPM, Refdata.PolState == PolState)
+    val_query = Refdata.query.with_entities(Refdata.Val).filter(Refdata.DateId==DateId,Refdata.InSW==InSW,Refdata.SB==SB,Refdata.OPM ==OPM, Refdata.PolState == PolState)
     
     wl = [u.WL for u in wl_query]
     wl = list(dict.fromkeys(wl))
